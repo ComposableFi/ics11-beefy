@@ -1,5 +1,8 @@
 package types
 
+// Beefy is used to indicate the beefy light client.
+const Beefy = "11-beefy"
+
 type SizedByte32 [32]byte
 
 func (b *SizedByte32) Marshal() ([]byte, error) {
