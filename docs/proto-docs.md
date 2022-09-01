@@ -204,7 +204,7 @@ Header contains the neccessary data to prove finality about IBC commitments
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `consensus_state` | [ConsensusStateUpdateProof](#beefy.v1.ConsensusStateUpdateProof) |  | optional payload to update ConsensusState |
+| `consensus_state_update` | [ConsensusStateUpdateProof](#beefy.v1.ConsensusStateUpdateProof) |  | optional payload to update ConsensusState |
 | `client_state` | [ClientStateUpdateProof](#beefy.v1.ClientStateUpdateProof) |  | optional payload to update the ClientState. |
 
 
