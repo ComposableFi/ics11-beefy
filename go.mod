@@ -8,7 +8,7 @@ require (
 	github.com/ChainSafe/gossamer v0.6.1-0.20220406182257-98400b30ca00
 	github.com/ChainSafe/log15 v1.0.0
 	github.com/ComposableFi/go-merkle-trees v0.0.0-20220505132313-e976260288cc
-	github.com/ComposableFi/go-substrate-rpc-client/v4 v4.0.1-0.20220830115327-2c45fdcbfba1
+	github.com/ComposableFi/go-substrate-rpc-client/v4 v4.0.1-0.20220819133021-62ed9987ea7c
 	github.com/cosmos/cosmos-sdk v0.46.0
 	github.com/cosmos/ibc-go/v5 v5.0.0-beta1
 	github.com/ethereum/go-ethereum v1.10.23
@@ -25,7 +25,7 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/chaindb v0.1.5-0.20220322154826-c0d431995732 // indirect
-	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
+	github.com/ChainSafe/go-schnorrkel v0.0.0-20210318173838-ccb5cd955283 // indirect
 	github.com/ComposableFi/go-subkey/v2 v2.0.0-tm03420 // indirect
 	github.com/OneOfOne/xxhash v1.2.8 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
