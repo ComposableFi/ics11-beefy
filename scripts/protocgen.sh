@@ -35,5 +35,5 @@ buf protoc \
 go mod tidy
 
 # move proto files to the right places
-cp -r github.com/ComposableFi/beefy-go-client/* ./
+cp -r github.com/ComposableFi/ics11-beefy/* ./
 rm -rf github.com

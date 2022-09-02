@@ -13,6 +13,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run tests
-        run: make test-dockerized
+        run: go test ./... -race
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash)
