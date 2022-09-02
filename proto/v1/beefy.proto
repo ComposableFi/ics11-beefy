@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package beefy.v1;
 
-option go_package = "github.com/ComposableFi/beefy-go-client/types";
+option go_package = "github.com/ComposableFi/ics11-beefy/types";
 
 import "google/protobuf/timestamp.proto";
 
