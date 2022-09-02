@@ -5,7 +5,7 @@ import (
 
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
 
-	"github.com/ComposableFi/beefy-go-client/types"
+	"github.com/ComposableFi/ics11-beefy/types"
 	"github.com/stretchr/testify/suite"
 )
 
