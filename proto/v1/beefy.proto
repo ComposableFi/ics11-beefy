@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package beefy.v1;
+package ibc.lightclients.beefy.v1;
 
 option go_package = "github.com/ComposableFi/ics11-beefy/types";
 
