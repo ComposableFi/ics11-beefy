@@ -6,18 +6,18 @@
 
 - [v1/beefy.proto](#v1/beefy.proto)
     - [BeefyAuthoritySet](#ibc.lightclients.beefy.v1.BeefyAuthoritySet)
-    - [BeefyMmrLeaf](#ibc.lightclients.beefy.v1.BeefyMmrLeaf)
-    - [BeefyMmrLeafPartial](#ibc.lightclients.beefy.v1.BeefyMmrLeafPartial)
+    - [BeefyMMRLeaf](#ibc.lightclients.beefy.v1.BeefyMMRLeaf)
     - [ClientState](#ibc.lightclients.beefy.v1.ClientState)
-    - [ClientStateUpdateProof](#ibc.lightclients.beefy.v1.ClientStateUpdateProof)
     - [Commitment](#ibc.lightclients.beefy.v1.Commitment)
     - [CommitmentSignature](#ibc.lightclients.beefy.v1.CommitmentSignature)
     - [ConsensusState](#ibc.lightclients.beefy.v1.ConsensusState)
-    - [ConsensusStateUpdateProof](#ibc.lightclients.beefy.v1.ConsensusStateUpdateProof)
     - [Header](#ibc.lightclients.beefy.v1.Header)
+    - [MMRUpdateProof](#ibc.lightclients.beefy.v1.MMRUpdateProof)
     - [Misbehaviour](#ibc.lightclients.beefy.v1.Misbehaviour)
     - [ParachainHeader](#ibc.lightclients.beefy.v1.ParachainHeader)
-    - [PayloadItem](#ibc.lightclients.beefy.v1.PayloadItem)
+    - [ParachainHeadersWithProof](#ibc.lightclients.beefy.v1.ParachainHeadersWithProof)
+    - [PartialMMRLeaf](#ibc.lightclients.beefy.v1.PartialMMRLeaf)
+    - [Payload](#ibc.lightclients.beefy.v1.Payload)
     - [SignedCommitment](#ibc.lightclients.beefy.v1.SignedCommitment)
   
     - [RelayChain](#ibc.lightclients.beefy.v1.RelayChain)
@@ -50,10 +50,10 @@ Beefy Authority Info
 
 
 
-<a name="ibc.lightclients.beefy.v1.BeefyMmrLeaf"></a>
+<a name="ibc.lightclients.beefy.v1.BeefyMMRLeaf"></a>
 
-### BeefyMmrLeaf
-BeefyMmrLeaf leaf data
+### BeefyMMRLeaf
+BeefyMMRLeaf leaf data
 
 
 | Field | Type | Label | Description |
@@ -63,24 +63,6 @@ BeefyMmrLeaf leaf data
 | `parent_hash` | [bytes](#bytes) |  | parent hash for this leaf |
 | `beefy_next_authority_set` | [BeefyAuthoritySet](#ibc.lightclients.beefy.v1.BeefyAuthoritySet) |  | beefy next authority set. |
 | `parachain_heads` | [bytes](#bytes) |  | merkle root hash of parachain heads included in the leaf. |
-
-
-
-
-
-
-<a name="ibc.lightclients.beefy.v1.BeefyMmrLeafPartial"></a>
-
-### BeefyMmrLeafPartial
-Partial data for MmrLeaf
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [uint32](#uint32) |  | leaf version |
-| `parent_number` | [uint32](#uint32) |  | parent block for this leaf |
-| `parent_hash` | [bytes](#bytes) |  | parent hash for this leaf |
-| `beefy_next_authority_set` | [BeefyAuthoritySet](#ibc.lightclients.beefy.v1.BeefyAuthoritySet) |  | next authority set. |
 
 
 
@@ -111,25 +93,6 @@ and a possible frozen height.
 
 
 
-<a name="ibc.lightclients.beefy.v1.ClientStateUpdateProof"></a>
-
-### ClientStateUpdateProof
-data needed to update the client
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `mmr_leaf` | [BeefyMmrLeaf](#ibc.lightclients.beefy.v1.BeefyMmrLeaf) |  | the new mmr leaf SCALE encoded. |
-| `mmr_leaf_index` | [uint64](#uint64) |  | leaf index for the mmr_leaf |
-| `mmr_proof` | [bytes](#bytes) | repeated | proof that this mmr_leaf index is valid. |
-| `signed_commitment` | [SignedCommitment](#ibc.lightclients.beefy.v1.SignedCommitment) |  | signed commitment data |
-| `authorities_proof` | [bytes](#bytes) | repeated | generated using full authority list from runtime |
-
-
-
-
-
-
 <a name="ibc.lightclients.beefy.v1.Commitment"></a>
 
 ### Commitment
@@ -138,8 +101,8 @@ Commitment message signed by beefy validators
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `payload` | [PayloadItem](#ibc.lightclients.beefy.v1.PayloadItem) | repeated | array of payload items signed by Beefy validators |
-| `block_numer` | [uint32](#uint32) |  | block number for this commitment |
+| `payload` | [Payload](#ibc.lightclients.beefy.v1.Payload) | repeated | array of payload items signed by Beefy validators |
+| `block_number` | [uint32](#uint32) |  | block number for this commitment |
 | `validator_set_id` | [uint64](#uint64) |  | validator set that signed this commitment |
 
 
@@ -179,23 +142,6 @@ ConsensusState defines the consensus state from Tendermint.
 
 
 
-<a name="ibc.lightclients.beefy.v1.ConsensusStateUpdateProof"></a>
-
-### ConsensusStateUpdateProof
-Parachain headers and their mmr proofs.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `parachain_headers` | [ParachainHeader](#ibc.lightclients.beefy.v1.ParachainHeader) | repeated | parachain headers needed for proofs and ConsensusState |
-| `mmr_proofs` | [bytes](#bytes) | repeated | mmr proofs for the headers gotten from rpc "mmr_generateProofs" |
-| `mmr_size` | [uint64](#uint64) |  | size of the mmr for the given proof |
-
-
-
-
-
-
 <a name="ibc.lightclients.beefy.v1.Header"></a>
 
 ### Header
@@ -204,8 +150,27 @@ Header contains the neccessary data to prove finality about IBC commitments
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `consensus_state_update` | [ConsensusStateUpdateProof](#ibc.lightclients.beefy.v1.ConsensusStateUpdateProof) |  | optional payload to update ConsensusState |
-| `client_state` | [ClientStateUpdateProof](#ibc.lightclients.beefy.v1.ClientStateUpdateProof) |  | optional payload to update the ClientState. |
+| `headers_with_proof` | [ParachainHeadersWithProof](#ibc.lightclients.beefy.v1.ParachainHeadersWithProof) |  | optional payload to update ConsensusState |
+| `mmr_update_proof` | [MMRUpdateProof](#ibc.lightclients.beefy.v1.MMRUpdateProof) |  | optional payload to update the ClientState. |
+
+
+
+
+
+
+<a name="ibc.lightclients.beefy.v1.MMRUpdateProof"></a>
+
+### MMRUpdateProof
+data needed to update the client
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signed_commitment` | [SignedCommitment](#ibc.lightclients.beefy.v1.SignedCommitment) |  | signed commitment data |
+| `latest_mmr_leaf_index` | [uint64](#uint64) |  | leaf index for the mmr_leaf |
+| `latest_mmr_leaf` | [BeefyMMRLeaf](#ibc.lightclients.beefy.v1.BeefyMMRLeaf) |  | the new mmr leaf SCALE encoded. |
+| `mmr_proof` | [bytes](#bytes) | repeated | proof that this mmr_leaf index is valid. |
+| `authorities_proof` | [bytes](#bytes) | repeated | generated using full authority list from runtime |
 
 
 
@@ -221,8 +186,8 @@ that implements Misbehaviour interface expected by ICS-02
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `header_1` | [Header](#ibc.lightclients.beefy.v1.Header) |  |  |
-| `header_2` | [Header](#ibc.lightclients.beefy.v1.Header) |  |  |
+| `header1` | [Header](#ibc.lightclients.beefy.v1.Header) |  |  |
+| `header2` | [Header](#ibc.lightclients.beefy.v1.Header) |  |  |
 
 
 
@@ -238,7 +203,7 @@ data needed to prove parachain header inclusion in mmr.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `parachain_header` | [bytes](#bytes) |  | scale-encoded parachain header bytes |
-| `mmr_leaf_partial` | [BeefyMmrLeafPartial](#ibc.lightclients.beefy.v1.BeefyMmrLeafPartial) |  | see beefy spec |
+| `partial_mmr_leaf` | [PartialMMRLeaf](#ibc.lightclients.beefy.v1.PartialMMRLeaf) |  | see beefy spec |
 | `parachain_heads_proof` | [bytes](#bytes) | repeated | proofs for our header in the parachain heads root |
 | `heads_leaf_index` | [uint32](#uint32) |  | leaf index for parachain heads proof |
 | `heads_total_count` | [uint32](#uint32) |  | total number of para heads in parachain_heads_root |
@@ -250,9 +215,44 @@ data needed to prove parachain header inclusion in mmr.
 
 
 
-<a name="ibc.lightclients.beefy.v1.PayloadItem"></a>
+<a name="ibc.lightclients.beefy.v1.ParachainHeadersWithProof"></a>
 
-### PayloadItem
+### ParachainHeadersWithProof
+Parachain headers and their mmr proofs.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `headers` | [ParachainHeader](#ibc.lightclients.beefy.v1.ParachainHeader) | repeated | parachain headers needed for proofs and ConsensusState |
+| `mmr_proofs` | [bytes](#bytes) | repeated | mmr proofs for the headers gotten from rpc "mmr_generateProofs" |
+| `mmr_size` | [uint64](#uint64) |  | size of the mmr for the given proof |
+
+
+
+
+
+
+<a name="ibc.lightclients.beefy.v1.PartialMMRLeaf"></a>
+
+### PartialMMRLeaf
+Partial data for MMRLeaf
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [uint32](#uint32) |  | leaf version |
+| `parent_number` | [uint32](#uint32) |  | parent block for this leaf |
+| `parent_hash` | [bytes](#bytes) |  | parent hash for this leaf |
+| `beefy_next_authority_set` | [BeefyAuthoritySet](#ibc.lightclients.beefy.v1.BeefyAuthoritySet) |  | next authority set. |
+
+
+
+
+
+
+<a name="ibc.lightclients.beefy.v1.Payload"></a>
+
+### Payload
 Actual payload items
 
 

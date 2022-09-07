@@ -1,4 +1,4 @@
-//nolint
+// nolint
 package types_test
 
 import (
@@ -126,16 +126,16 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 				var nextAuthorityTreeRoot = bytes32(nextAuthorityTree.Root())
 
 				clientState = &beefytypes.ClientState{
-					MmrRootHash:          signedCommitment.Commitment.Payload[0].Value,
+					MMRRootHash:          signedCommitment.Commitment.Payload[0].Value,
 					LatestBeefyHeight:    blockNumber,
 					BeefyActivationBlock: 0,
 					Authority: &beefytypes.BeefyAuthoritySet{
-						Id:            uint64(signedCommitment.Commitment.ValidatorSetID),
+						ID:            uint64(signedCommitment.Commitment.ValidatorSetID),
 						Len:           uint32(len(authorities)),
 						AuthorityRoot: &authorityTreeRoot,
 					},
 					NextAuthoritySet: &beefytypes.BeefyAuthoritySet{
-						Id:            uint64(signedCommitment.Commitment.ValidatorSetID) + 1,
+						ID:            uint64(signedCommitment.Commitment.ValidatorSetID) + 1,
 						Len:           uint32(len(nextAuthorities)),
 						AuthorityRoot: &nextAuthorityTreeRoot,
 					},
@@ -257,12 +257,12 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 
 				header := beefytypes.ParachainHeader{
 					ParachainHeader: paraHeaders[PARA_ID],
-					MmrLeafPartial: &beefytypes.BeefyMmrLeafPartial{
+					PartialMMRLeaf: &beefytypes.PartialMMRLeaf{
 						Version:      beefytypes.U8(v.Leaf.Version),
 						ParentNumber: uint32(v.Leaf.ParentNumberAndHash.ParentNumber),
 						ParentHash:   &parentHash,
 						BeefyNextAuthoritySet: beefytypes.BeefyAuthoritySet{
-							Id:            uint64(v.Leaf.BeefyNextAuthoritySet.ID),
+							ID:            uint64(v.Leaf.BeefyNextAuthoritySet.ID),
 							Len:           uint32(v.Leaf.BeefyNextAuthoritySet.Len),
 							AuthorityRoot: &authorityRoot,
 						},
