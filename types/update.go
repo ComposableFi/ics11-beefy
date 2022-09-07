@@ -119,7 +119,7 @@ func (cs *ClientState) verifyHeader(
 	}
 
 	// only update if we have a higher block number.
-	if signedCommitment.Commitment.BlockNumer > cs.LatestBeefyHeight {
+	if signedCommitment.Commitment.BlockNumber > cs.LatestBeefyHeight {
 		for _, payload := range signedCommitment.Commitment.Payload {
 			mmrRootID := []byte("mh")
 			// checks for the right payloadId
@@ -145,7 +145,7 @@ func (cs *ClientState) verifyHeader(
 					return sdkerrors.Wrap(err, ErrFailedVerifyMMRLeaf.Error()) // error!, mmr proof is invalid
 				}
 				// update the block_number
-				cs.LatestBeefyHeight = signedCommitment.Commitment.BlockNumer
+				cs.LatestBeefyHeight = signedCommitment.Commitment.BlockNumber
 				// updates the mmr_root_hash
 				cs.MMRRootHash = payload.PayloadData
 				// authority set has changed, rotate our view of the authorities

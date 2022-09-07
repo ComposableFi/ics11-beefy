@@ -217,7 +217,7 @@ message Commitment {
   repeated Payload payload = 1;
 
   // block number for this commitment
-  uint32 block_numer = 2;
+  uint32 block_number = 2;
 
   // validator set that signed this commitment
   uint64 validator_set_id = 3 [(gogoproto.customname) = "ValidatorSetID" ,(gogoproto.jsontag) = "validator_set_id", json_name = "validator_set_id"];

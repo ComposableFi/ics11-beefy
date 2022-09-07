@@ -102,7 +102,7 @@ Commitment message signed by beefy validators
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `payload` | [Payload](#ibc.lightclients.beefy.v1.Payload) | repeated | array of payload items signed by Beefy validators |
-| `block_numer` | [uint32](#uint32) |  | block number for this commitment |
+| `block_number` | [uint32](#uint32) |  | block number for this commitment |
 | `validator_set_id` | [uint64](#uint64) |  | validator set that signed this commitment |
 
 
