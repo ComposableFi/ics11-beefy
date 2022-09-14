@@ -3,12 +3,13 @@ package types
 import (
 	"time"
 
+	"github.com/ComposableFi/ics11-beefy/exported"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	clienttypes "github.com/cosmos/ibc-go/v5/modules/core/02-client/types"
-	"github.com/cosmos/ibc-go/v5/modules/core/exported"
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 )
 
-var _ exported.Header = &Misbehaviour{}
+var _ ibcexported.Header = &Misbehaviour{}
 
 // FrozenHeight Use the same FrozenHeight for all misbehaviour
 var FrozenHeight = clienttypes.NewHeight(0, 1)
@@ -25,7 +26,7 @@ func NewMisbehaviour(clientID string, header1, header2 *Header) *Misbehaviour {
 
 // ClientType is Tendermint light client
 func (misbehaviour Misbehaviour) ClientType() string {
-	return Beefy
+	return exported.Beefy
 }
 
 // GetTime returns the timestamp at which misbehaviour occurred. It uses the
@@ -126,6 +127,6 @@ func (misbehaviour Misbehaviour) ValidateBasic() error {
 
 // GetHeight implements the current exported.Header interface, to be updated
 // TODO: Remove GetHeight()
-func (misbehaviour Misbehaviour) GetHeight() exported.Height {
+func (misbehaviour Misbehaviour) GetHeight() ibcexported.Height {
 	panic("implement me")
 }
