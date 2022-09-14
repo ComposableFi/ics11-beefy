@@ -6,6 +6,7 @@ import (
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
 
 	"github.com/ChainSafe/gossamer/lib/trie"
+	"github.com/ComposableFi/ics11-beefy/exported"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -14,19 +15,19 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v5/modules/core/04-channel/types"
 	commitmenttypes "github.com/cosmos/ibc-go/v5/modules/core/23-commitment/types"
 	host "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	"github.com/cosmos/ibc-go/v5/modules/core/exported"
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 	"github.com/ethereum/go-ethereum/log"
 )
 
-var _ exported.ClientState = (*ClientState)(nil)
+var _ ibcexported.ClientState = (*ClientState)(nil)
 
 // ClientType is beefy.
 func (cs ClientState) ClientType() string {
-	return Beefy
+	return exported.Beefy
 }
 
 // GetLatestHeight returns latest block height.
-func (cs ClientState) GetLatestHeight() exported.Height {
+func (cs ClientState) GetLatestHeight() ibcexported.Height {
 	return clienttypes.NewHeight(0, uint64(cs.LatestBeefyHeight))
 }
 
@@ -40,7 +41,7 @@ func (cs ClientState) Validate() error {
 }
 
 // Initialize will check that initial consensus state is equal to the latest consensus state of the initial client.
-func (cs ClientState) Initialize(_ sdk.Context, _ codec.BinaryCodec, _ sdk.KVStore, consState exported.ConsensusState) error {
+func (cs ClientState) Initialize(_ sdk.Context, _ codec.BinaryCodec, _ sdk.KVStore, consState ibcexported.ConsensusState) error {
 	if _, ok := consState.(*ConsensusState); !ok {
 		return sdkerrors.Wrapf(clienttypes.ErrInvalidConsensus, "invalid initial consensus state. expected type: %T, got: %T",
 			&ConsensusState{}, consState)
@@ -52,22 +53,22 @@ func (cs ClientState) Initialize(_ sdk.Context, _ codec.BinaryCodec, _ sdk.KVSto
 // The client may be:
 // - Active: if frozen sequence is 0
 // - Frozen: otherwise beefy client is frozen
-func (cs ClientState) Status(_ sdk.Context, _ sdk.KVStore, _ codec.BinaryCodec) exported.Status {
+func (cs ClientState) Status(_ sdk.Context, _ sdk.KVStore, _ codec.BinaryCodec) ibcexported.Status {
 	if cs.FrozenHeight > 0 {
-		return exported.Frozen
+		return ibcexported.Frozen
 	}
 
-	return exported.Active
+	return ibcexported.Active
 }
 
 // ExportMetadata is a no-op since beefy does not store any metadata in client store
-func (cs ClientState) ExportMetadata(_ sdk.KVStore) []exported.GenesisMetadata {
+func (cs ClientState) ExportMetadata(_ sdk.KVStore) []ibcexported.GenesisMetadata {
 	return nil
 }
 
 // ZeroCustomFields returns a ClientState that is a copy of the current ClientState
 // with all client customizable fields zeroed out
-func (cs ClientState) ZeroCustomFields() exported.ClientState {
+func (cs ClientState) ZeroCustomFields() ibcexported.ClientState {
 	// copy over all chain-specified fields
 	// and leave custom fields empty
 	return &ClientState{
@@ -80,11 +81,11 @@ func (cs ClientState) ZeroCustomFields() exported.ClientState {
 func (cs ClientState) VerifyClientState(
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
-	prefix exported.Prefix,
+	height ibcexported.Height,
+	prefix ibcexported.Prefix,
 	counterpartyClientIdentifier string,
 	proof []byte,
-	clientState exported.ClientState,
+	clientState ibcexported.ClientState,
 ) error {
 	if clientState == nil {
 		return sdkerrors.Wrap(clienttypes.ErrInvalidClient, "client state cannot be empty")
@@ -136,12 +137,12 @@ func (cs ClientState) VerifyClientState(
 func (cs ClientState) VerifyClientConsensusState(
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
+	height ibcexported.Height,
 	counterpartyClientIdentifier string,
-	consensusHeight exported.Height,
-	prefix exported.Prefix,
+	consensusHeight ibcexported.Height,
+	prefix ibcexported.Prefix,
 	proof []byte,
-	consensusState exported.ConsensusState,
+	consensusState ibcexported.ConsensusState,
 ) error {
 	if consensusState == nil {
 		return sdkerrors.Wrap(clienttypes.ErrInvalidClient, "consensus state cannot be empty")
@@ -194,10 +195,10 @@ func (cs ClientState) VerifyPacketCommitment(
 	ctx sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
+	height ibcexported.Height,
 	_ uint64,
 	_ uint64,
-	prefix exported.Prefix,
+	prefix ibcexported.Prefix,
 	proof []byte,
 	portID,
 	channelID string,
@@ -243,8 +244,8 @@ func produceVerificationArgs(
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
 	cs ClientState,
-	height exported.Height,
-	prefix exported.Prefix,
+	height ibcexported.Height,
+	prefix ibcexported.Prefix,
 	proof []byte,
 ) (beefyProof BeefyProof, consensusState *ConsensusState, err error) {
 	// no height checks because parachain_header height fits into revision_number
@@ -281,11 +282,11 @@ func produceVerificationArgs(
 func (cs ClientState) VerifyConnectionState(
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
-	prefix exported.Prefix,
+	height ibcexported.Height,
+	prefix ibcexported.Prefix,
 	proof []byte,
 	connectionID string,
-	connectionEnd exported.ConnectionI,
+	connectionEnd ibcexported.ConnectionI,
 ) error {
 	beefyProof, consensusState, err := produceVerificationArgs(store, cdc, cs, height, prefix, proof)
 	if err != nil {
@@ -333,10 +334,10 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 	ctx sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
+	height ibcexported.Height,
 	_ uint64,
 	_ uint64,
-	prefix exported.Prefix,
+	prefix ibcexported.Prefix,
 	proof []byte,
 	portID,
 	channelID string,
@@ -374,7 +375,7 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 	return nil
 }
 
-func (cs ClientState) VerifyChannelState(store sdk.KVStore, cdc codec.BinaryCodec, height exported.Height, prefix exported.Prefix, proof []byte, portID, channelID string, channel exported.ChannelI) error {
+func (cs ClientState) VerifyChannelState(store sdk.KVStore, cdc codec.BinaryCodec, height ibcexported.Height, prefix ibcexported.Prefix, proof []byte, portID, channelID string, channel ibcexported.ChannelI) error {
 	beefyProof, consensusState, err := produceVerificationArgs(store, cdc, cs, height, prefix, proof)
 	if err != nil {
 		return err
@@ -420,10 +421,10 @@ func (cs ClientState) VerifyPacketReceiptAbsence(
 	ctx sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
+	height ibcexported.Height,
 	_ uint64,
 	_ uint64,
-	prefix exported.Prefix,
+	prefix ibcexported.Prefix,
 	proof []byte,
 	portID,
 	channelID string,
@@ -448,10 +449,10 @@ func (cs ClientState) VerifyNextSequenceRecv(
 	_ sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
-	height exported.Height,
+	height ibcexported.Height,
 	_ uint64,
 	_ uint64,
-	prefix exported.Prefix,
+	prefix ibcexported.Prefix,
 	proof []byte,
 	portID,
 	channelID string,
@@ -488,22 +489,22 @@ func (cs ClientState) VerifyNextSequenceRecv(
 	return nil
 }
 
-func (cs *ClientState) CheckHeaderAndUpdateState(context sdk.Context, codec codec.BinaryCodec, store sdk.KVStore, header exported.Header) (exported.ClientState, exported.ConsensusState, error) {
+func (cs *ClientState) CheckHeaderAndUpdateState(context sdk.Context, codec codec.BinaryCodec, store sdk.KVStore, header ibcexported.Header) (ibcexported.ClientState, ibcexported.ConsensusState, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (cs *ClientState) CheckMisbehaviourAndUpdateState(context sdk.Context, codec codec.BinaryCodec, store sdk.KVStore, misbehaviour exported.Misbehaviour) (exported.ClientState, error) {
+func (cs *ClientState) CheckMisbehaviourAndUpdateState(context sdk.Context, codec codec.BinaryCodec, store sdk.KVStore, misbehaviour ibcexported.Misbehaviour) (ibcexported.ClientState, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (cs *ClientState) CheckSubstituteAndUpdateState(ctx sdk.Context, cdc codec.BinaryCodec, subjectClientStore, substituteClientStore sdk.KVStore, substituteClient exported.ClientState) (exported.ClientState, error) {
+func (cs *ClientState) CheckSubstituteAndUpdateState(ctx sdk.Context, cdc codec.BinaryCodec, subjectClientStore, substituteClientStore sdk.KVStore, substituteClient ibcexported.ClientState) (ibcexported.ClientState, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (cs *ClientState) VerifyUpgradeAndUpdateState(ctx sdk.Context, cdc codec.BinaryCodec, store sdk.KVStore, newClient exported.ClientState, newConsState exported.ConsensusState, proofUpgradeClient, proofUpgradeConsState []byte) (exported.ClientState, exported.ConsensusState, error) {
+func (cs *ClientState) VerifyUpgradeAndUpdateState(ctx sdk.Context, cdc codec.BinaryCodec, store sdk.KVStore, newClient ibcexported.ClientState, newConsState ibcexported.ConsensusState, proofUpgradeClient, proofUpgradeConsState []byte) (ibcexported.ClientState, ibcexported.ConsensusState, error) {
 	//TODO implement me
 	panic("implement me")
 }
