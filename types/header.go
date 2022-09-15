@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 	"log"
 	"time"
 
 	"github.com/ChainSafe/gossamer/lib/trie"
 	"github.com/ComposableFi/go-substrate-rpc-client/v4/scale"
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	"github.com/ComposableFi/ics11-beefy/exported"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	ics02 "github.com/cosmos/ibc-go/v5/modules/core/02-client/types"
-	"github.com/cosmos/ibc-go/v5/modules/core/exported"
 )
 
-var _ exported.Header = &Header{}
+var _ ibcexported.Header = &Header{}
 
 const revisionNumber = 0
 
@@ -75,13 +76,13 @@ func (h Header) ConsensusState() *ConsensusState {
 
 // ClientType defines that the Header is a Beefy consensus algorithm
 func (h Header) ClientType() string {
-	return Beefy
+	return exported.Beefy
 }
 
 // GetHeight returns the current height. It returns 0 if the tendermint
 // header is nil.
 // NOTE: the header.Header is checked to be non nil in ValidateBasic.
-func (h Header) GetHeight() exported.Height {
+func (h Header) GetHeight() ibcexported.Height {
 	parachainHeader, err := DecodeParachainHeader(h.HeadersWithProof.Headers[0].ParachainHeader)
 	if err != nil {
 		log.Fatal(err)
