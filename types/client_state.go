@@ -3,7 +3,7 @@ package types
 import (
 	"strings"
 
-	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	scalecodec "github.com/ComposableFi/go-substrate-rpc-client/v4/types/codec"
 
 	"github.com/ChainSafe/gossamer/lib/trie"
 	"github.com/ComposableFi/ics11-beefy/exported"
@@ -102,7 +102,7 @@ func (cs ClientState) VerifyClientState(
 		return err
 	}
 
-	csEncoded, err := rpcclienttypes.Encode(clientState)
+	csEncoded, err := scalecodec.Encode(clientState)
 	if err != nil {
 		return sdkerrors.Wrap(err, "clientState could not be scale encoded")
 	}
@@ -153,7 +153,7 @@ func (cs ClientState) VerifyClientConsensusState(
 		return sdkerrors.Wrapf(clienttypes.ErrInvalidClient, "invalid client type %T, expected %T", consensusState, &ConsensusState{})
 	}
 
-	csEncoded, err := rpcclienttypes.Encode(consensusState)
+	csEncoded, err := scalecodec.Encode(consensusState)
 	if err != nil {
 		return sdkerrors.Wrap(err, "consensusState could not be scale encoded")
 	}
@@ -264,7 +264,7 @@ func produceVerificationArgs(
 		return BeefyProof{}, nil, sdkerrors.Wrapf(commitmenttypes.ErrInvalidPrefix, "invalid prefix type %T, expected *MerklePrefix", prefix)
 	}
 
-	err = rpcclienttypes.Decode(proof, &beefyProof)
+	err = scalecodec.Decode(proof, &beefyProof)
 	if err != nil {
 		return BeefyProof{}, nil, sdkerrors.Wrap(err, "proof couldn't be decoded into BeefyProof struct")
 	}
@@ -310,7 +310,7 @@ func (cs ClientState) VerifyConnectionState(
 		return sdkerrors.Wrap(err, "keyPath could not be scale encoded")
 	}
 
-	connEncoded, err := rpcclienttypes.Encode(connection)
+	connEncoded, err := scalecodec.Encode(connection)
 	if err != nil {
 		return sdkerrors.Wrap(err, "connection state could not be scale encoded")
 	}
@@ -392,7 +392,7 @@ func (cs ClientState) VerifyChannelState(store sdk.KVStore, cdc codec.BinaryCode
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "invalid channel type %T", channel)
 	}
 
-	chanEncoded, err := rpcclienttypes.Encode(channelEnd)
+	chanEncoded, err := scalecodec.Encode(channelEnd)
 	if err != nil {
 		return sdkerrors.Wrap(err, "channel end could not be scale encoded")
 	}
@@ -469,7 +469,7 @@ func (cs ClientState) VerifyNextSequenceRecv(
 		return err
 	}
 
-	key, err := rpcclienttypes.Encode(path)
+	key, err := scalecodec.Encode(path)
 	if err != nil {
 		return sdkerrors.Wrap(err, "next sequence recv path could not be scale encoded")
 	}

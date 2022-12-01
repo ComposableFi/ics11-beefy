@@ -11,6 +11,7 @@ import (
 
 	"github.com/ComposableFi/go-substrate-rpc-client/v4/scale"
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	scalecodec "github.com/ComposableFi/go-substrate-rpc-client/v4/types/codec"
 )
 
 func TestDecodeParachainHeader(t *testing.T) {
@@ -18,7 +19,7 @@ func TestDecodeParachainHeader(t *testing.T) {
 	require.NoError(t, err, "error decoding parachain bytes")
 
 	var header rpcclienttypes.Header
-	err = rpcclienttypes.Decode(headerBytes, &header)
+	err = scalecodec.Decode(headerBytes, &header)
 	require.NoError(t, err, "error decoding parachain header")
 
 	parentHash, err := hex.DecodeString("7edf044b273544342c4dc30a234c327405b3b03f2f20f53fc6a41d6d2765536d")
@@ -46,7 +47,7 @@ func TestDecodeExtrinsicTimestamp(t *testing.T) {
 	require.NoError(t, err)
 
 	var extrinsic rpcclienttypes.Extrinsic
-	err = rpcclienttypes.Decode(timestampBytes, &extrinsic)
+	err = scalecodec.Decode(timestampBytes, &extrinsic)
 	require.NoError(t, err)
 
 	unix, err := scale.NewDecoder(bytes.NewReader(extrinsic.Method.Args[:])).DecodeUintCompact()

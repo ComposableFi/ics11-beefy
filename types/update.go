@@ -10,7 +10,7 @@ import (
 	"github.com/ComposableFi/go-merkle-trees/merkle"
 	"github.com/ComposableFi/go-merkle-trees/mmr"
 	merkletypes "github.com/ComposableFi/go-merkle-trees/types"
-	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	scalecodec "github.com/ComposableFi/go-substrate-rpc-client/v4/types/codec"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -65,7 +65,7 @@ func (cs *ClientState) verifyHeader(
 	}
 
 	// beefy authorities are signing the hash of the scale-encoded Commitment
-	commitmentBytes, err := rpcclienttypes.Encode(&signedCommitment.Commitment)
+	commitmentBytes, err := scalecodec.Encode(&signedCommitment.Commitment)
 	if err != nil {
 		return sdkerrors.Wrap(err, ErrInvalidCommitment.Error())
 	}
@@ -127,7 +127,7 @@ func (cs *ClientState) verifyHeader(
 				// the next authorities are in the latest BeefyMmrLeaf
 
 				// scale encode the mmr leaf
-				mmrLeafBytes, err := rpcclienttypes.Encode(clientState.LatestMMRLeaf)
+				mmrLeafBytes, err := scalecodec.Encode(clientState.LatestMMRLeaf)
 				if err != nil {
 					return sdkerrors.Wrap(err, ErrInvalidCommitment.Error())
 				}
@@ -193,7 +193,7 @@ func (cs *ClientState) parachainHeadersToMMRProof(beefyHeader *Header) (*mmr.Pro
 		// first we need to reconstruct the mmr leaf for this header
 		parachainHeader := beefyHeader.HeadersWithProof.Headers[i]
 
-		headsLeafBytes, err := rpcclienttypes.Encode(ParaIdAndHeader{ParaId: cs.ParaID, Header: parachainHeader.ParachainHeader})
+		headsLeafBytes, err := scalecodec.Encode(ParaIdAndHeader{ParaId: cs.ParaID, Header: parachainHeader.ParachainHeader})
 		if err != nil {
 			return nil, sdkerrors.Wrap(err, ErrInvalivParachainHeadsProof.Error())
 		}
@@ -228,7 +228,7 @@ func (cs *ClientState) parachainHeadersToMMRProof(beefyHeader *Header) (*mmr.Pro
 		}
 
 		// the mmr leaf's are a scale-encoded
-		mmrLeafBytes, err := rpcclienttypes.Encode(mmrLeaf)
+		mmrLeafBytes, err := scalecodec.Encode(mmrLeaf)
 		if err != nil {
 			return nil, sdkerrors.Wrap(err, ErrInvalidMMRLeaf.Error())
 		}

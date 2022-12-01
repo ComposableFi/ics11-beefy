@@ -15,6 +15,7 @@ import (
 	"github.com/ComposableFi/go-merkle-trees/merkle"
 	client "github.com/ComposableFi/go-substrate-rpc-client/v4"
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	scalecodec "github.com/ComposableFi/go-substrate-rpc-client/v4/types/codec"
 	beefytypes "github.com/ComposableFi/ics11-beefy/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
@@ -81,7 +82,7 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 			compactCommitment := rpcclienttypes.CompactSignedCommitment{}
 
 			// attempt to decode the SignedCommitments
-			err = rpcclienttypes.DecodeFromHex(msg.(string), &compactCommitment)
+			err = scalecodec.DecodeFromHex(msg.(string), &compactCommitment)
 			require.NoError(t, err)
 
 			signedCommitment := compactCommitment.Unpack()
@@ -126,7 +127,7 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 				var nextAuthorityTreeRoot = bytes32(nextAuthorityTree.Root())
 
 				clientState = &beefytypes.ClientState{
-					MMRRootHash:          signedCommitment.Commitment.Payload[0].Value,
+					MMRRootHash:          signedCommitment.Commitment.Payload[0].Data,
 					LatestBeefyHeight:    blockNumber,
 					BeefyActivationBlock: 0,
 					Authority: &beefytypes.BeefyAuthoritySet{
@@ -158,7 +159,7 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 			// create full storage key for our own paraId
 			keyPrefix := rpcclienttypes.CreateStorageKeyPrefix("Paras", "Heads")
 			// so we can query all blocks from lastfinalized to latestBeefyHeight
-			encodedParaID, err := rpcclienttypes.Encode(PARA_ID)
+			encodedParaID, err := scalecodec.Encode(PARA_ID)
 			require.NoError(t, err)
 
 			twoXHash := xxhash.New64(encodedParaID).Sum(nil)
@@ -237,7 +238,7 @@ func TestCheckHeaderAndUpdateState(t *testing.T) {
 				}
 
 				for _, paraId := range sortedParaIds {
-					bytes, err := rpcclienttypes.Encode(ParaIdAndHeader{ParaId: paraId, Header: paraHeaders[paraId]})
+					bytes, err := scalecodec.Encode(ParaIdAndHeader{ParaId: paraId, Header: paraHeaders[paraId]})
 					require.NoError(t, err)
 					leafHash := crypto.Keccak256(bytes)
 					paraHeadsLeaves = append(paraHeadsLeaves, leafHash)

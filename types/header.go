@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 	"log"
 	"time"
+
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 
 	"github.com/ChainSafe/gossamer/lib/trie"
 	"github.com/ComposableFi/go-substrate-rpc-client/v4/scale"
 	rpcclienttypes "github.com/ComposableFi/go-substrate-rpc-client/v4/types"
+	codec "github.com/ComposableFi/go-substrate-rpc-client/v4/types/codec"
 	"github.com/ComposableFi/ics11-beefy/exported"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	ics02 "github.com/cosmos/ibc-go/v5/modules/core/02-client/types"
@@ -30,13 +32,13 @@ type HeadData struct {
 // as an argument and returns a concrete substrate Header type.
 func DecodeParachainHeader(hb []byte) (rpcclienttypes.Header, error) {
 	var headData HeadData
-	err := rpcclienttypes.Decode(hb, &headData)
+	err := codec.Decode(hb, &headData)
 	if err != nil {
 		return rpcclienttypes.Header{}, err
 	}
 
 	var h rpcclienttypes.Header
-	err = rpcclienttypes.Decode(headData.Head, &h)
+	err = codec.Decode(headData.Head, &h)
 	if err != nil {
 		return rpcclienttypes.Header{}, err
 	}
@@ -46,7 +48,7 @@ func DecodeParachainHeader(hb []byte) (rpcclienttypes.Header, error) {
 // DecodeExtrinsicTimestamp decodes a scale encoded timestamp to a time.Time type
 func DecodeExtrinsicTimestamp(encodedExtrinsic []byte) (time.Time, error) {
 	var extrinsic rpcclienttypes.Extrinsic
-	decodeErr := rpcclienttypes.Decode(encodedExtrinsic, &extrinsic)
+	decodeErr := codec.Decode(encodedExtrinsic, &extrinsic)
 	if decodeErr != nil {
 		return time.Time{}, decodeErr
 	}
