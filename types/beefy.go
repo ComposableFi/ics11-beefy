@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type SizedByte32 [32]byte
 
 func (b *SizedByte32) Marshal() ([]byte, error) {
@@ -52,4 +54,28 @@ func (u *U8) Unmarshal(data []byte) error {
 
 func (u *U8) Size() int {
 	return 1
+}
+
+// PolkadotUnbondingPeriod is the unbonding period for polkadot relay chain in days
+const PolkadotUnbondingPeriod int64 = 28
+
+// KusamaUnbondingPeriod is the unbonding period for polkadot relay chain in days
+const KusamaUnbondingPeriod int64 = 7
+
+// DAY is the number of seconds in a day
+const DAY int64 = 24 * 60 * 60
+
+func (r RelayChain) UnbondingPeriod() time.Duration {
+	switch r {
+	case RelayChain_POLKADOT:
+		return time.Duration(PolkadotUnbondingPeriod*DAY) * time.Second
+	case RelayChain_KUSAMA:
+		return time.Duration(KusamaUnbondingPeriod*DAY) * time.Second
+	default:
+		return 0
+	}
+}
+
+func (r RelayChain) TrustingPeriod() time.Duration {
+	return r.UnbondingPeriod() / 3
 }
